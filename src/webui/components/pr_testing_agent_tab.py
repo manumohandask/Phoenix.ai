@@ -40,6 +40,7 @@ def create_pr_testing_agent_tab(webui_manager: WebuiManager):
             with gr.Row():
                 org_input = gr.Textbox(
                     label="Organization",
+                    value="hrblock-ca",
                     placeholder="hrblock-ca",
                     scale=1,
                     info="Your Azure DevOps organization name"
