@@ -36,11 +36,12 @@ def create_ui(theme_name="Ocean"):
     
     /* Header Container */
     .header-row {
-        background: linear-gradient(135deg, #161b22 0%, #0d1117 100%) !important;
-        padding: 18px 40px !important;
-        border-radius: 12px !important;
-        margin-bottom: 25px !important;
-        border: 1px solid #30363d !important;
+        background: linear-gradient(135deg, #1a1f28 0%, #0d1117 100%) !important;
+        padding: 25px 50px !important;
+        border-radius: 16px !important;
+        margin-bottom: 30px !important;
+        border: 1px solid rgba(255, 193, 7, 0.15) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -48,8 +49,8 @@ def create_ui(theme_name="Ocean"):
     
     /* Logo Hover Effect */
     .phoenix-logo-hover:hover {
-        transform: translateY(-3px) scale(1.05) !important;
-        filter: drop-shadow(0 8px 16px rgba(255, 193, 7, 0.4)) !important;
+        transform: translateY(-5px) scale(1.1) rotate(8deg) !important;
+        filter: drop-shadow(0 0 30px rgba(255, 106, 0, 0.9)) drop-shadow(0 12px 25px rgba(255, 140, 0, 0.6)) !important;
     }
     
     /* Logo Styling - No animations, no download icon */
@@ -259,34 +260,34 @@ def create_ui(theme_name="Ocean"):
             gr.HTML(
                 f"""
                 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Orbitron:wght@500&display=swap" rel="stylesheet">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 25px; width: 100%; max-width: 1200px; margin: 0 auto;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 40px; width: 100%; padding: 5px 0;">
                     <img src="data:image/png;base64,{logo_base64}" 
                          class="phoenix-logo-hover"
-                         style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; flex-shrink: 0; transition: transform 0.3s ease;">
-                    <div style="flex: 1; text-align: left; max-width: 800px;">
+                         style="width: 125px; height: 125px; object-fit: contain; border-radius: 12px; flex-shrink: 0; transition: all 0.3s ease; filter: drop-shadow(0 0 20px rgba(255, 106, 0, 0.6)) drop-shadow(0 8px 16px rgba(255, 140, 0, 0.4));">
+                    <div style="text-align: center; flex: 0 1 auto;">
                         <h1 style="
                             font-family: 'Montserrat', sans-serif;
                             font-weight: 800;
-                            font-size: 46px;
-                            background: linear-gradient(135deg, #FF6A00 0%, #FFC107 100%);
+                            font-size: 52px;
+                            background: linear-gradient(135deg, #FFD700 0%, #FF8C00 50%, #FF0000 100%);
                             -webkit-background-clip: text;
                             -webkit-text-fill-color: transparent;
                             background-clip: text;
-                            line-height: 100%;
-                            letter-spacing: 1.5px;
+                            line-height: 110%;
+                            letter-spacing: 2px;
                             text-transform: uppercase;
-                            margin: 0 0 10px 0;
-                            filter: drop-shadow(0 0 20px rgba(255, 193, 7, 0.4)) drop-shadow(0 4px 12px rgba(255, 106, 0, 0.3));
+                            margin: 0 0 12px 0;
+                            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.4)) drop-shadow(0 5px 20px rgba(255, 106, 0, 0.5)) drop-shadow(0 8px 25px rgba(255, 0, 0, 0.3));
                         ">PHOENIX AI</h1>
                         <p style="
                             font-family: 'Orbitron', sans-serif;
                             font-weight: 500;
-                            font-size: 17px;
+                            font-size: 19px;
                             color: #FFC107;
                             line-height: 140%;
-                            letter-spacing: 0.8px;
+                            letter-spacing: 1px;
                             margin: 0;
-                            opacity: 1;
+                            text-shadow: 0 2px 10px rgba(255, 193, 7, 0.3);
                         ">Intelligent E2E Testing & Automation Platform</p>
                     </div>
                 </div>
