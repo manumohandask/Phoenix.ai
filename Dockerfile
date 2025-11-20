@@ -1,5 +1,8 @@
 FROM python:3.11-slim-bookworm
 
+# Phoenix AI - Intelligent E2E Testing & Automation Platform
+# https://github.com/manumohandask/Phoenix.ai
+
 # Set platform for multi-arch builds (Docker Buildx will set this)
 ARG TARGETPLATFORM
 ARG NODE_MAJOR=20

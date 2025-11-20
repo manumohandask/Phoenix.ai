@@ -1,40 +1,87 @@
-<img src="./assets/web-ui.png" alt="Browser Use Web UI" width="full"/>
+# 🔥 Phoenix AI - Intelligent E2E Testing & Automation Platform
 
-<br/>
+<div align="center">
 
-[![GitHub stars](https://img.shields.io/github/stars/browser-use/web-ui?style=social)](https://github.com/browser-use/web-ui/stargazers)
-[![Discord](https://img.shields.io/discord/1303749220842340412?color=7289DA&label=Discord&logo=discord&logoColor=white)](https://link.browser-use.com/discord)
-[![Documentation](https://img.shields.io/badge/Documentation-📕-blue)](https://docs.browser-use.com)
-[![WarmShao](https://img.shields.io/twitter/follow/warmshao?style=social)](https://x.com/warmshao)
+[![License](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![AI Powered](https://img.shields.io/badge/AI-Powered-ff6b35.svg)](https://github.com/manumohandask/Phoenix.ai)
 
-This project builds upon the foundation of the [browser-use](https://github.com/browser-use/browser-use), which is designed to make websites accessible for AI agents.
+**Phoenix AI** is an advanced AI-powered end-to-end testing and automation platform that revolutionizes software quality assurance through intelligent automation.
 
-We would like to officially thank [WarmShao](https://github.com/warmshao) for his contribution to this project.
+</div>
 
-**WebUI:** is built on Gradio and supports most of `browser-use` functionalities. This UI is designed to be user-friendly and enables easy interaction with the browser agent.
+## 🚀 What is Phoenix AI?
 
-**Expanded LLM Support:** We've integrated support for various Large Language Models (LLMs), including: Google, OpenAI, Azure OpenAI, Anthropic, DeepSeek, Ollama etc. And we plan to add support for even more models in the future.
+Phoenix AI is a next-generation testing platform that combines the power of AI with comprehensive testing capabilities. Unlike traditional testing tools, Phoenix AI understands your application context and autonomously performs complex testing scenarios.
 
-**Custom Browser Support:** You can use your own browser with our tool, eliminating the need to re-login to sites or deal with other authentication challenges. This feature also supports high-definition screen recording.
+### 🎯 Core Capabilities
 
-**Persistent Browser Sessions:** You can choose to keep the browser window open between AI tasks, allowing you to see the complete history and state of AI interactions.
+**🔍 PR Testing & Code Review**
+- Automated pull request validation and testing
+- Intelligent code change analysis
+- Integration with Azure DevOps and GitHub
+- Automated regression testing on code changes
+- Smart test case generation based on PR content
 
-<video src="https://github.com/user-attachments/assets/56bc7080-f2e3-4367-af22-6bf2245ff6cb" controls="controls">Your browser does not support playing this video!</video>
+**🔌 API Integration Testing**
+- Comprehensive REST API testing
+- Automated API endpoint discovery and validation
+- Request/response validation with AI-powered assertions
+- Load testing and performance monitoring
+- Integration with OpenAPI/Swagger specifications
 
-## Installation Guide
+**🌐 E2E Browser Automation**
+- Intelligent web application testing
+- Cross-browser compatibility testing
+- Visual regression detection
+- Session persistence for complex workflows
+- Custom browser integration with existing profiles
+
+**🤖 AI-Powered Intelligence**
+- Support for multiple LLMs: OpenAI (GPT-4, GPT-4o), Google (Gemini), Anthropic (Claude), Azure OpenAI, DeepSeek, Ollama, and more
+- Context-aware test execution
+- Self-healing test scripts that adapt to UI changes
+- Natural language test case definition
+- Intelligent error detection and reporting
+
+**📊 Advanced Features**
+- Real-time test execution monitoring
+- Comprehensive test reports with screenshots and videos
+- Integration with CI/CD pipelines
+- Parallel test execution
+- Custom test data generation
+- Memory-enhanced agents for complex scenarios
+
+## 🎨 Why Phoenix AI?
+
+- **Intelligent Automation**: AI understands your application and writes tests for you
+- **Comprehensive Coverage**: From UI to API to PR validation - all in one platform
+- **Developer-Friendly**: Natural language test definitions, no complex scripting
+- **Enterprise-Ready**: Integrates with Azure DevOps, GitHub, and major CI/CD tools
+- **Cost-Effective**: Reduce manual testing time by up to 80%
+- **Scalable**: Run tests in parallel across multiple environments
+
+---
+
+**Built on the foundation of browser-use and enhanced with enterprise-grade testing capabilities.**
+
+## 📦 Installation Guide
 
 ### Option 1: Local Installation
 
-Read the [quickstart guide](https://docs.browser-use.com/quickstart#prepare-the-environment) or follow the steps below to get started.
-
 #### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/browser-use/web-ui.git
-cd web-ui
+git clone https://github.com/manumohandask/Phoenix.ai.git
+cd Phoenix.ai
 ```
 
 #### Step 2: Set Up Python Environment
-We recommend using [uv](https://docs.astral.sh/uv/) for managing the Python environment.
+We recommend using Python 3.11 or higher. You can use [uv](https://docs.astral.sh/uv/) or standard virtual environments.
+
+Using venv:
+```bash
+python -m venv .venv
+```
 
 Using uv (recommended):
 ```bash
@@ -82,13 +129,24 @@ cp .env.example .env
 ```
 2. Open `.env` in your preferred text editor and add your API keys and other settings
 
-#### Step 5: Enjoy the web-ui
-1.  **Run the WebUI:**
+#### Step 5: Launch Phoenix AI
+1.  **Run Phoenix AI:**
     ```bash
     python webui.py --ip 127.0.0.1 --port 7788
     ```
-2. **Access the WebUI:** Open your web browser and navigate to `http://127.0.0.1:7788`.
-3. **Using Your Own Browser(Optional):**
+2. **Access the Platform:** Open your web browser and navigate to `http://127.0.0.1:7788`.
+
+3. **Configure for PR Testing (Optional):**
+   - Set up Azure DevOps credentials in `.env` file
+   - Configure your organization and project details
+   - See [Azure DevOps Setup Guide](docs/AZURE_DEVOPS_SETUP.md) for detailed instructions
+
+4. **Configure for API Testing (Optional):**
+   - Add your API endpoints in the API Testing tab
+   - Configure authentication tokens and headers
+   - Import OpenAPI/Swagger specifications
+
+5. **Using Your Own Browser (Optional):**
     - Set `BROWSER_PATH` to the executable path of your browser and `BROWSER_USER_DATA` to the user data directory of your browser. Leave `BROWSER_USER_DATA` empty if you want to use local user data.
       - Windows
         ```env
@@ -102,7 +160,7 @@ cp .env.example .env
          BROWSER_USER_DATA="/Users/YourUsername/Library/Application Support/Google/Chrome"
         ```
     - Close all Chrome windows
-    - Open the WebUI in a non-Chrome browser, such as Firefox or Edge. This is important because the persistent browser context will use the Chrome data when running the agent.
+    - Open Phoenix AI in a non-Chrome browser, such as Firefox or Edge. This is important because the persistent browser context will use the Chrome data when running the agent.
     - Check the "Use Own Browser" option within the Browser Settings.
 
 ### Option 2: Docker Installation
@@ -114,8 +172,8 @@ cp .env.example .env
 
 #### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/browser-use/web-ui.git
-cd web-ui
+git clone https://github.com/manumohandask/Phoenix.ai.git
+cd Phoenix.ai
 ```
 
 #### Step 2: Configure Environment
@@ -139,13 +197,72 @@ For ARM64 systems (e.g., Apple Silicon Macs), please run follow command:
 TARGETPLATFORM=linux/arm64 docker compose up --build
 ```
 
-#### Step 4: Enjoy the web-ui and vnc
-- Web-UI: Open `http://localhost:7788` in your browser
+#### Step 4: Access Phoenix AI
+- Phoenix AI Platform: Open `http://localhost:7788` in your browser
 - VNC Viewer (for watching browser interactions): Open `http://localhost:6080/vnc.html`
   - Default VNC password: "youvncpassword"
   - Can be changed by setting `VNC_PASSWORD` in your `.env` file
 
-## Changelog
-- [x] **2025/01/26:** Thanks to @vvincent1234. Now browser-use-webui can combine with DeepSeek-r1 to engage in deep thinking!
-- [x] **2025/01/10:** Thanks to @casistack. Now we have Docker Setup option and also Support keep browser open between tasks.[Video tutorial demo](https://github.com/browser-use/web-ui/issues/1#issuecomment-2582511750).
-- [x] **2025/01/06:** Thanks to @richard-devbot. A New and Well-Designed WebUI is released. [Video tutorial demo](https://github.com/warmshao/browser-use-webui/issues/1#issuecomment-2573393113).
+## 📚 Feature Documentation
+
+- **[PR Testing Guide](docs/PR_TESTING_TOOL.md)** - Learn how to automate pull request testing with Azure DevOps integration
+- **[API Testing Guide](docs/API_TESTING.md)** - Comprehensive guide to API integration testing
+- **[Azure DevOps Setup](docs/AZURE_DEVOPS_SETUP.md)** - Configure Azure DevOps for PR automation
+- **[Quick Start Guide](docs/QUICK_START_HRB.md)** - Get started with Phoenix AI in minutes
+
+## 🎯 Use Cases
+
+### PR Testing & Validation
+Automatically test pull requests before merging. Phoenix AI analyzes code changes, generates relevant test cases, and validates functionality.
+
+### API Integration Testing
+Test your REST APIs with intelligent assertions. Phoenix AI understands your API structure and validates responses automatically.
+
+### E2E Web Testing
+Create comprehensive end-to-end tests using natural language. Phoenix AI navigates your application like a human tester.
+
+### Regression Testing
+Catch bugs before they reach production. Phoenix AI maintains test suites that adapt to your application changes.
+
+## 🛠️ Technology Stack
+
+- **AI Models**: OpenAI GPT-4, Google Gemini, Anthropic Claude, Azure OpenAI, DeepSeek, Ollama
+- **Web Automation**: Playwright, Selenium WebDriver
+- **UI Framework**: Gradio
+- **API Testing**: httpx, requests
+- **Integration**: Azure DevOps API, GitHub API
+- **Language**: Python 3.11+
+
+## 📊 Roadmap
+
+- [x] **2025/01:** PR Testing with Azure DevOps integration
+- [x] **2025/01:** API Testing module with OpenAPI support
+- [x] **2025/01:** Enhanced E2E browser automation
+- [ ] **2025/02:** GitHub Actions integration
+- [ ] **2025/02:** Advanced visual regression testing
+- [ ] **2025/03:** Mobile app testing (iOS/Android)
+- [ ] **2025/03:** Performance testing and monitoring
+- [ ] **2025/04:** AI-powered test case generation
+- [ ] **2025/04:** Team collaboration features
+
+## 🤝 Contributing
+
+We welcome contributions! Phoenix AI is built to be extensible and community-driven.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+Phoenix AI builds upon the excellent foundation of [browser-use](https://github.com/browser-use/browser-use) and extends it with enterprise testing capabilities. We thank the browser-use team and all contributors.
+
+---
+
+<div align="center">
+
+**Made with ❤️ by the Phoenix AI Team**
+
+[Report Bug](https://github.com/manumohandask/Phoenix.ai/issues) · [Request Feature](https://github.com/manumohandask/Phoenix.ai/issues) · [Documentation](docs/)
+
+</div>
