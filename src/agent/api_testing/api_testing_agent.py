@@ -551,6 +551,42 @@ Did the UI validation succeed?"""
         
         return report
     
+    def _validate_user_fields(self, response_data: Any, field_assertions: Dict[str, str]) -> bool:
+        """
+        Validate that a user with specified fields exists in the response.
+        Handles both single objects and arrays of objects.
+        Supports type-flexible comparison (string "1" matches int 1).
+        """
+        def values_match(actual_value: Any, expected_value: str) -> bool:
+            """Compare values with type flexibility."""
+            # Direct string comparison
+            if str(actual_value) == expected_value:
+                return True
+            # Try numeric comparison if expected is numeric
+            try:
+                if isinstance(actual_value, (int, float)):
+                    return actual_value == float(expected_value)
+            except (ValueError, TypeError):
+                pass
+            # Try boolean comparison
+            if isinstance(actual_value, bool):
+                return str(actual_value).lower() == expected_value.lower()
+            return False
+        
+        # If response is a single object, check it directly
+        if isinstance(response_data, dict):
+            return all(values_match(response_data.get(key), value) for key, value in field_assertions.items())
+        
+        # If response is an array, check if any object matches all fields
+        if isinstance(response_data, list):
+            for item in response_data:
+                if isinstance(item, dict):
+                    # Check if this item matches ALL the field assertions
+                    if all(values_match(item.get(key), value) for key, value in field_assertions.items()):
+                        return True
+        
+        return False
+    
     async def execute_gherkin_scenario(self, gherkin_text: str) -> TestResult:
         """
         Execute a Gherkin scenario by parsing it and making the appropriate API call.
@@ -645,14 +681,47 @@ Did the UI validation succeed?"""
                     )
                 
                 # Check for specific validations mentioned in Gherkin
-                for line in lines:
+                i = 0
+                while i < len(lines):
+                    line = lines[i].strip()
                     line_lower = line.lower()
                     
                     if 'should be a json array' in line_lower or 'should be an array' in line_lower:
                         if not isinstance(response_data, list):
                             validation_errors.append("Response is not a JSON array")
                     
-                    if 'should contain' in line_lower:
+                    # Handle table-based assertions (key-value pairs)
+                    if 'following details:' in line_lower or 'with the following' in line_lower:
+                        # Look ahead for table rows
+                        i += 1
+                        table_assertions = {}
+                        while i < len(lines):
+                            next_line = lines[i].strip()
+                            # Parse table row: | key | value |
+                            if next_line.startswith('Then |') or next_line.startswith('|'):
+                                # Remove "Then" prefix if present
+                                table_line = next_line.replace('Then', '').strip()
+                                # Parse table row
+                                parts = [p.strip() for p in table_line.split('|') if p.strip()]
+                                if len(parts) == 2 and parts[0].lower() not in ['key', 'field', 'attribute']:
+                                    # This is a data row, not header
+                                    table_assertions[parts[0]] = parts[1]
+                                i += 1
+                            else:
+                                break
+                        
+                        # Validate table assertions
+                        if table_assertions:
+                            user_found = self._validate_user_fields(response_data, table_assertions)
+                            if not user_found:
+                                missing_fields = ', '.join([f"{k}={v}" for k, v in table_assertions.items()])
+                                validation_errors.append(f"User with fields ({missing_fields}) not found in response")
+                            else:
+                                for key, value in table_assertions.items():
+                                    extracted_values[f"validated_{key}"] = value
+                    
+                    # Simple "should contain" checks
+                    if 'should contain' in line_lower and 'following' not in line_lower:
                         # Extract what should be contained
                         content_match = re.search(r'should contain.*?"([^"]+)"', line, re.IGNORECASE)
                         if content_match:
@@ -662,6 +731,8 @@ Did the UI validation succeed?"""
                                 validation_errors.append(f"Response does not contain '{search_value}'")
                             else:
                                 extracted_values[f"contains_{search_value.replace(' ', '_')}"] = True
+                    
+                    i += 1
                 
                 success = len(validation_errors) == 0 and status_ok
                 
