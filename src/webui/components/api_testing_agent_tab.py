@@ -246,6 +246,10 @@ def create_api_testing_agent_tab(webui_manager: WebuiManager):
                 }
                 return f"❌ Execution error: {str(e)}", json.dumps(error_result, indent=2)
         
+        def clear_all_handler():
+            """Clear all fields"""
+            return "", "", "", "", ""
+        
         # Wire up the event handlers
         generate_btn.click(
             fn=lambda prompt, context, llm_prov, llm_model, llm_key, llm_url: 
@@ -278,4 +282,10 @@ def create_api_testing_agent_tab(webui_manager: WebuiManager):
                 get_agent_setting_component("llm_base_url")
             ],
             outputs=[status_output, test_results]
+        )
+        
+        clear_btn.click(
+            fn=clear_all_handler,
+            inputs=[],
+            outputs=[gherkin_prompt, context_input, generated_gherkin, status_output, test_results]
         )
