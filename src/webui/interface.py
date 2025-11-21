@@ -8,6 +8,7 @@ from src.webui.components.browser_settings_tab import create_browser_settings_ta
 from src.webui.components.browser_use_agent_tab import create_browser_use_agent_tab
 from src.webui.components.deep_research_agent_tab import create_deep_research_agent_tab
 from src.webui.components.pr_testing_agent_tab import create_pr_testing_agent_tab
+from src.webui.components.api_testing_agent_tab import create_api_testing_agent_tab
 from src.webui.components.load_save_config_tab import create_load_save_config_tab
 
 theme_map = {
@@ -307,16 +308,11 @@ def create_ui(theme_name="Ocean"):
             with gr.TabItem("🔍 PR Testing"):
                 create_pr_testing_agent_tab(ui_manager)
 
-            with gr.TabItem("� Testing Suite"):
-                gr.Markdown(
-                    """
-                    ### Phoenix AI Testing Capabilities
-                    """,
-                    elem_classes=["tab-header-text"],
-                )
-                with gr.Tabs():
-                    with gr.TabItem("🔬 Deep Research"):
-                        create_deep_research_agent_tab(ui_manager)
+            with gr.TabItem("🔌 API Testing"):
+                create_api_testing_agent_tab(ui_manager)
+
+            with gr.TabItem("🔬 Deep Research"):
+                create_deep_research_agent_tab(ui_manager)
 
             with gr.TabItem("📁 Load & Save Config"):
                 create_load_save_config_tab(ui_manager)

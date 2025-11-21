@@ -23,12 +23,14 @@ Phoenix AI is a next-generation testing platform that combines the power of AI w
 - Automated regression testing on code changes
 - Smart test case generation based on PR content
 
-**🔌 API Integration Testing**
-- Comprehensive REST API testing
-- Automated API endpoint discovery and validation
+**🔌 API Testing with Gherkin Generator**
+- **Generate Gherkin BDD scenarios** from natural language prompts
+- Comprehensive REST API testing with intelligent validation
+- **Extract values from API responses** using JSONPath expressions
+- **Validate API data in UI** for end-to-end consistency checks
 - Request/response validation with AI-powered assertions
-- Load testing and performance monitoring
-- Integration with OpenAPI/Swagger specifications
+- Support for Bearer Token, Basic Auth, and custom authentication
+- Detailed test reports with execution history
 
 **🌐 E2E Browser Automation**
 - Intelligent web application testing
