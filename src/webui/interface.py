@@ -6,7 +6,6 @@ from src.webui.webui_manager import WebuiManager
 from src.webui.components.agent_settings_tab import create_agent_settings_tab
 from src.webui.components.browser_settings_tab import create_browser_settings_tab
 from src.webui.components.browser_use_agent_tab import create_browser_use_agent_tab
-from src.webui.components.deep_research_agent_tab import create_deep_research_agent_tab
 from src.webui.components.pr_testing_agent_tab import create_pr_testing_agent_tab
 from src.webui.components.api_testing_agent_tab import create_api_testing_agent_tab
 from src.webui.components.load_save_config_tab import create_load_save_config_tab
@@ -311,10 +310,7 @@ def create_ui(theme_name="Ocean"):
             with gr.TabItem("🔌 API Testing"):
                 create_api_testing_agent_tab(ui_manager)
 
-            with gr.TabItem("🔬 Deep Research"):
-                create_deep_research_agent_tab(ui_manager)
-
-            with gr.TabItem("📁 Load & Save Config"):
+            with gr.TabItem(" Load & Save Config"):
                 create_load_save_config_tab(ui_manager)
 
     return demo

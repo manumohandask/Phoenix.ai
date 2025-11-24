@@ -16,7 +16,6 @@ from browser_use.agent.service import Agent
 from src.browser.custom_browser import CustomBrowser
 from src.browser.custom_context import CustomBrowserContext
 from src.controller.custom_controller import CustomController
-from src.agent.deep_research.deep_research_agent import DeepResearchAgent
 
 
 class WebuiManager:
@@ -40,15 +39,6 @@ class WebuiManager:
         self.bu_user_help_response: Optional[str] = None
         self.bu_current_task: Optional[asyncio.Task] = None
         self.bu_agent_task_id: Optional[str] = None
-
-    def init_deep_research_agent(self) -> None:
-        """
-        init deep research agent
-        """
-        self.dr_agent: Optional[DeepResearchAgent] = None
-        self.dr_current_task = None
-        self.dr_agent_task_id: Optional[str] = None
-        self.dr_save_dir: Optional[str] = None
 
     def init_pr_testing_agent(self) -> None:
         """
