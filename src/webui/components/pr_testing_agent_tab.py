@@ -29,6 +29,12 @@ logger = logging.getLogger(__name__)
 def create_pr_testing_agent_tab(webui_manager: WebuiManager):
     """Creates the PR Testing Agent tab following existing patterns"""
     
+    # Get references to Agent Settings components
+    def get_agent_setting(key):
+        """Helper to get agent settings component"""
+        comp_id = f"agent_settings.{key}"
+        return webui_manager.id_to_component.get(comp_id)
+    
     with gr.Column():
         gr.Markdown("## 🔍 Pull Request Testing Automation")
         gr.Markdown("Connect to Azure DevOps, select a PR, and run automated validation tests")
@@ -106,42 +112,7 @@ def create_pr_testing_agent_tab(webui_manager: WebuiManager):
                 info="Choose a PR from the list above"
             )
         
-        # ===== Phase 3: Test Configuration =====
-        with gr.Group():
-            gr.Markdown("### ⚙️ Step 3: Configure Test Generation")
-            
-            with gr.Row():
-                llm_provider_dropdown = gr.Dropdown(
-                    choices=["openai", "anthropic", "google", "deepseek", "ollama"],
-                    value="openai",
-                    label="LLM Provider",
-                    scale=1
-                )
-                llm_model_dropdown = gr.Dropdown(
-                    choices=[
-                        "gpt-4o", "gpt-4", "gpt-3.5-turbo",
-                        "claude-3-5-sonnet-20241022", "claude-3-opus-20240229",
-                        "gemini-2.0-flash", "gemini-1.5-pro",
-                        "deepseek-chat", "deepseek-reasoner"
-                    ],
-                    value="gpt-4o",
-                    label="Model",
-                    scale=1
-                )
-            
-            llm_api_key_input = gr.Textbox(
-                label="LLM API Key (optional)",
-                placeholder="Leave empty to use environment variable",
-                type="password",
-                info="Provide API key here or set in .env file"
-            )
-            
-            headless_checkbox = gr.Checkbox(
-                label="Run browser in headless mode (faster, but can't watch execution)",
-                value=True
-            )
-        
-        # ===== Phase 4: Execution =====
+        # ===== Phase 3: Execution =====
         validate_button = gr.Button(
             "✅ Validate Pull Request",
             variant="primary",
@@ -180,10 +151,6 @@ def create_pr_testing_agent_tab(webui_manager: WebuiManager):
         "fetch_button": fetch_button,
         "pr_dataframe": pr_dataframe,
         "pr_selector": pr_selector,
-        "llm_provider_dropdown": llm_provider_dropdown,
-        "llm_model_dropdown": llm_model_dropdown,
-        "llm_api_key_input": llm_api_key_input,
-        "headless_checkbox": headless_checkbox,
         "validate_button": validate_button,
         "status_output": status_output,
         "context_display": context_display,
@@ -286,18 +253,20 @@ def create_pr_testing_agent_tab(webui_manager: WebuiManager):
             )
     
     async def validate_pr_async(organization: str, pat: str, project: str, repository: str,
-                                pr_selected: str, llm_prov: str, llm_model: str, 
-                                llm_api_key: str, headless: bool):
-        """Main validation workflow"""
+                                pr_selected: str,
+                                llm_provider: str, llm_model_name: str, llm_api_key: str, 
+                                llm_temperature: float):
+        """Main validation workflow - fetches LLM settings from Agent Settings tab"""
         try:
             # Convert inputs to proper types
             organization = str(organization or "")
             pat = str(pat or "")
             project = str(project or "")
             repository = str(repository or "")
-            llm_prov = str(llm_prov or "openai")
-            llm_model = str(llm_model or "gpt-4o")
-            llm_api_key = str(llm_api_key or "").strip()
+            llm_prov = str(llm_provider or "openai")
+            llm_model = str(llm_model_name or "gpt-4o")
+            llm_key = str(llm_api_key or "").strip()
+            llm_temp = float(llm_temperature) if llm_temperature else 0.3
             
             # Validate LLM API key before proceeding
             api_key_map = {
@@ -312,20 +281,22 @@ def create_pr_testing_agent_tab(webui_manager: WebuiManager):
             
             required_key = api_key_map.get(llm_prov)
             
-            # Check if API key is provided via UI or environment variable
-            has_api_key = bool(llm_api_key) or (required_key and os.getenv(required_key))
+            # Check if API key is provided via Agent Settings or environment variable
+            has_api_key = bool(llm_key) or (required_key and os.getenv(required_key))
             
             if required_key and not has_api_key:
                 error_msg = (
                     f"❌ Error: {llm_prov.upper()} API key not found!\n\n"
-                    f"🔑 Please provide the API key in one of these ways:\n\n"
-                    f"**Option 1: Via UI (Easiest)**\n"
-                    f"- Enter your API key in the 'LLM API Key' field above\n\n"
+                    f"🔑 Please configure API key in **Agent Settings** tab:\n\n"
+                    f"**Option 1: Via Agent Settings (Recommended)**\n"
+                    f"1. Go to 'Agent Settings' tab\n"
+                    f"2. Select LLM Provider: {llm_prov}\n"
+                    f"3. Enter your API key in the 'LLM API Key' field\n\n"
                     f"**Option 2: Via Environment Variable**\n"
                     f"1. Create/edit `.env` file in project root\n"
                     f"2. Add: `{required_key}=your-api-key-here`\n"
                     f"3. Restart the WebUI server\n\n"
-                    f"**Alternative:** Select a different LLM provider (e.g., Ollama for local usage)"
+                    f"**Alternative:** Select 'Ollama' for local LLM usage (no API key needed)"
                 )
                 yield (error_msg, "", "", "", "")
                 return
@@ -465,52 +436,89 @@ def create_pr_testing_agent_tab(webui_manager: WebuiManager):
             # Phase 2: Generate Test Plan
             yield (f"🔄 Phase 2/4: Generating test plan with AI (this may take 15-30 seconds)...", context_md, "", "", "")
             
-            # Use the LLM settings from parameters, pass API key if provided
-            # Use lower temperature for faster, more consistent responses
+            # Use the LLM settings from Agent Settings tab
             test_gen = TestGenerator(
                 provider=llm_prov, 
                 model_name=llm_model,
-                temperature=0.3,  # Lower temperature for faster generation
-                api_key=llm_api_key if llm_api_key else None
+                temperature=llm_temp,
+                api_key=llm_key if llm_key else None
             )
             test_plan = await test_gen.generate_test_plan(pr_context)
             
-            # Format test plan with full details
-            test_plan_md = f"""### Test Plan
+            # Format test plan with structured, copyable format
+            test_plan_md = f"""### 📋 Test Plan Summary
 {test_plan.summary}
 
-**Overview:** {len(test_plan.test_scenarios)} Scenarios | {len(test_plan.manual_steps)} Manual Steps | {len(test_plan.automated_steps)} Automated Steps
+**Test Coverage:** {len(test_plan.test_scenarios)} Scenarios | {len(test_plan.manual_steps)} Manual | {len(test_plan.automated_steps)} Automated
 
 ---
 
-#### 📋 Test Scenarios
+### � Test Scenarios (Copy & Paste Ready)
+
 """
             
+            # Format test scenarios in a copyable structure
             for i, scenario in enumerate(test_plan.test_scenarios, 1):
-                test_plan_md += f"\n**{i}. {scenario.name}**\n"
-                test_plan_md += f"   - Priority: {scenario.priority}\n"
-                test_plan_md += f"   - Type: {scenario.test_type}\n"
-                test_plan_md += f"   - Description: {scenario.description}\n"
+                test_plan_md += f"""
+<details>
+<summary><b>Scenario {i}: {scenario.name}</b> [Priority: {scenario.priority} | Type: {scenario.test_type}]</summary>
+
+**Description:**  
+{scenario.description}
+
+**Priority:** {scenario.priority}  
+**Test Type:** {scenario.test_type}
+
+---
+</details>
+
+"""
             
-            test_plan_md += f"\n\n#### 🖐️ Manual Test Steps\n"
+            test_plan_md += f"""
+---
+
+### 🖐️ Manual Test Steps
+
+<details>
+<summary><b>Click to expand {len(test_plan.manual_steps)} manual test steps</b></summary>
+
+"""
             for i, step in enumerate(test_plan.manual_steps, 1):
-                test_plan_md += f"\n**Step {i}:** {step.description}\n"
-                test_plan_md += f"   - Action: {step.action_type}\n"
+                test_plan_md += f"""
+**Step {i}: {step.description}**
+
+```yaml
+Action: {step.action_type}
+"""
                 if step.target:
-                    test_plan_md += f"   - Target: `{step.target}`\n"
+                    test_plan_md += f"Target: {step.target}\n"
                 if step.input_value:
-                    test_plan_md += f"   - Input: `{step.input_value}`\n"
-                test_plan_md += f"   - Expected: {step.expected_result}\n"
+                    test_plan_md += f"Input: {step.input_value}\n"
+                test_plan_md += f"Expected Result: {step.expected_result}\n```\n\n"
             
-            test_plan_md += f"\n\n#### 🤖 Automated Test Steps\n"
+            test_plan_md += "</details>\n\n---\n\n"
+            
+            test_plan_md += f"""### 🤖 Automation-Ready Test Steps
+
+<details>
+<summary><b>Click to expand {len(test_plan.automated_steps)} automated test steps</b></summary>
+
+"""
             for i, step in enumerate(test_plan.automated_steps, 1):
-                test_plan_md += f"\n**Step {i}:** {step.description}\n"
-                test_plan_md += f"   - Action: {step.action_type}\n"
+                test_plan_md += f"""
+**Step {i}: {step.description}**
+
+```python
+# Automation Step {i}
+action = "{step.action_type}"
+"""
                 if step.target:
-                    test_plan_md += f"   - Target: `{step.target}`\n"
+                    test_plan_md += f"target = \"{step.target}\"\n"
                 if step.input_value:
-                    test_plan_md += f"   - Input: `{step.input_value}`\n"
-                test_plan_md += f"   - Expected: {step.expected_result}\n"
+                    test_plan_md += f"input_value = \"{step.input_value}\"\n"
+                test_plan_md += f"expected_result = \"{step.expected_result}\"\n```\n\n"
+            
+            test_plan_md += "</details>"
             
             if test_plan.prerequisites:
                 test_plan_md += f"\n\n#### ⚙️ Prerequisites\n"
@@ -601,9 +609,15 @@ def create_pr_testing_agent_tab(webui_manager: WebuiManager):
         outputs=[pr_dataframe, pr_selector, status_output]
     )
     
+    # Get Agent Settings components
+    llm_provider_comp = get_agent_setting("llm_provider")
+    llm_model_comp = get_agent_setting("llm_model_name")
+    llm_api_key_comp = get_agent_setting("llm_api_key")
+    llm_temperature_comp = get_agent_setting("llm_temperature")
+    
     validate_button.click(
         validate_pr_async,
-        inputs=[org_input, pat_input, project_dropdown, repo_dropdown, pr_selector, 
-                llm_provider_dropdown, llm_model_dropdown, llm_api_key_input, headless_checkbox],
+        inputs=[org_input, pat_input, project_dropdown, repo_dropdown, pr_selector,
+                llm_provider_comp, llm_model_comp, llm_api_key_comp, llm_temperature_comp],
         outputs=[status_output, context_display, test_plan_display, results_display, final_output]
     )
